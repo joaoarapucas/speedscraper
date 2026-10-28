@@ -1,0 +1,30 @@
+[Unit]
+Description=speedscraper - scraper do speedrun.com
+Wants=network-online.target
+After=network-online.target
+# Dispara o e-mail quando o systemd desiste de reiniciar (5 falhas em 1 hora).
+OnFailure=speedscraper-alert@%n.service
+StartLimitIntervalSec=1h
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=speedscraper
+Group=speedscraper
+EnvironmentFile=/etc/speedscraper/env
+WorkingDirectory=/var/lib/speedscraper
+ExecStart=/usr/local/bin/speedscraper run --db /var/lib/speedscraper/speedscraper.db --log-format json
+Restart=on-failure
+RestartSec=30
+# O daemon da 30 s (--grace) para os jobs em andamento terminarem.
+KillSignal=SIGTERM
+TimeoutStopSec=60
+
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/var/lib/speedscraper
+
+[Install]
+WantedBy=multi-user.target

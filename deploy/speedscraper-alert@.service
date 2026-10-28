@@ -1,0 +1,7 @@
+[Unit]
+Description=Envia e-mail quando a unidade %i falha
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/speedscraper/env
+ExecStart=/bin/sh -c 'journalctl -u %i -n 100 --no-pager | /usr/local/bin/speedscraper alert -subject "unidade %i falhou e nao sera mais reiniciada"'
